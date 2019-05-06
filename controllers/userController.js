@@ -8,7 +8,6 @@ module.exports = {
 		const { url } = req;
 		let { name, email, password } = req.body;
 		let user = res.locals.user;
-		console.log(user);
 		switch (true) {
 			case user && url.split("/").includes("login"):
 				const validPassword = await bcrypt.compare(password, user.password);

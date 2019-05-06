@@ -27,10 +27,8 @@ module.exports = {
 		}
 	},
 	async getLoggedInUser(req, res, next) {
-		console.log(req.user._id);
 		const user = await Profile.findOne({ user: req.user._id });
 		res.locals.me = user;
-		console.log(user);
 		return next();
 	},
 };
