@@ -1,0 +1,9 @@
+node_modules
+.env
+*.0x
+test.js
+logs
+isolate-*
+processed.*
+note*
+config*
