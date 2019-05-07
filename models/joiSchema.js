@@ -1,21 +1,42 @@
 const Joi = require("joi");
 
-const getUserValidSchema = perm => {
-	return {
-		uid: Joi.string()
-			.required()
-			.error(new Error(`${perm} user uid of type 'String' is required!`)),
-		email: Joi.string()
-			.email()
-			.required()
-			.error(new Error(`${perm} user email of type 'email' is required!`)),
+const getValidCareerSchema = (type, req) => {
+	const commonProperties = {
+		from: req.method === "POST" ? Joi.date().required() : Joi.date(),
+		to: Joi.date(),
+		current: Joi.bool(),
+		description: Joi.string().max(150),
 	};
+	let validSchema;
+	switch (type) {
+		case "education":
+			validSchema = {
+				...commonProperties,
+				school: req.method === "POST" ? Joi.string().required() : Joi.string(),
+				degree: req.method === "POST" ? Joi.string().required() : Joi.string(),
+				fieldOfStudy: req.method === "POST" ? Joi.string().required() : Joi.string(),
+			};
+			break;
+
+		case "experience":
+			validSchema = {
+				...commonProperties,
+				title: req.method === "POST" ? Joi.string().required() : Joi.string(),
+				company: req.method === "POST" ? Joi.string().required() : Joi.string(),
+				location: Joi.string(),
+			};
+			break;
+		default:
+			validSchema = { error: true, message: "Wrong career type provided!" };
+	}
+	return validSchema;
 };
-const getReadWriteValidSchema = perm => {
-	return Joi.array()
-		.items(Joi.object().keys(getUserValidSchema(perm)))
-		.min(1);
-};
+const validUsernameSchema = () => Joi.string().max(50);
+
+const validCareerSchema = (type, req, maxAllowed) =>
+	Joi.array()
+		.items(getValidCareerSchema(type, req))
+		.max(maxAllowed);
 
 module.exports = {
 	validateUserSchema(user, req) {
@@ -25,8 +46,8 @@ module.exports = {
 						.min(2)
 						.max(50)
 						.required()
-						.error(() => new Error('"Name" of at least 2 and at max 50 letters is required!'))
-				: Joi.forbidden().error(() => new Error("Name is not allowed!")),
+						.error(new Error('"Name" of at least 2 and at max 50 letters is required!'))
+				: Joi.forbidden().error(new Error("Name is not allowed!")),
 			email: Joi.string()
 				.email()
 				.required(),
@@ -39,36 +60,25 @@ module.exports = {
 		};
 		return Joi.validate(user, schema);
 	},
-
-	validateFeedSchema(feed) {
+	validateProfileSchema(profile, req) {
 		const schema = {
-			name: Joi.string().max(100),
-			description: Joi.string().max(500),
-			targetElementType: Joi.string()
-				.required()
-				.max(20),
-			targetElementUid: Joi.string().required(),
-			targetElementStage: Joi.string()
-				.valid("Therm", "Eye", "Terra", "Core")
-				.required()
-				.error(new Error("Please provide valid stage name!")),
-			readUsers: getReadWriteValidSchema("read"),
-			writeUsers: getReadWriteValidSchema("write"),
-			data: Joi.array().items(Joi.object()),
-			labelsRead: Joi.array().items(Joi.string()),
-			labelsWrite: Joi.array().items(Joi.string()),
-			properties: Joi.object(),
+			company: Joi.string().max(50),
+			website: Joi.string().max(75),
+			location: Joi.string().max(100),
+			status: req.method === "POST" ? Joi.string().required() : Joi.string(),
+			skills: req.method === "POST" ? Joi.string().required() : Joi.string(),
+			bio: Joi.string().max(150),
+			githubUsername: validUsernameSchema(),
+			experience: validCareerSchema("experience", req, 10),
+			education: validCareerSchema("education", req, 10),
+			social: Joi.object().keys({
+				youtube: validUsernameSchema(),
+				twitter: validUsernameSchema(),
+				facebook: validUsernameSchema(),
+				linkedin: validUsernameSchema(),
+				instagram: validUsernameSchema(),
+			}),
 		};
-		return Joi.validate(feed, schema);
+		return Joi.validate(profile, schema);
 	},
-
-	validateElementSchema(element) {
-		const schema = {
-			type: Joi.string().max(10),
-			data: Joi.object(),
-		};
-		return Joi.validate(element, schema);
-	},
-	getReadWriteValidSchema,
-	getUserValidSchema,
 };
