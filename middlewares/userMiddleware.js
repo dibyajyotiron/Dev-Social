@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { Profile } = require("../models/profile");
 module.exports = {
 	async validateUser(req, res, next) {
-		const email = res.locals.receivedEmail;
+		const email = req.body.email;
 		const user = await User.findOne({ email });
 		if (user) res.locals.user = user;
 		return next();
