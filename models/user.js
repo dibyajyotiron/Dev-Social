@@ -5,28 +5,27 @@ const jwt = require("jsonwebtoken");
 
 const { secretOrKey } = require("../config/keys");
 
-const userSchema = new Schema({
-	name: {
-		type: String,
-		required: true,
+const userSchema = new Schema(
+	{
+		name: {
+			type: String,
+			required: true,
+		},
+		email: {
+			type: String,
+			required: true,
+			unique: true,
+		},
+		password: {
+			type: String,
+			required: true,
+		},
+		avatar: {
+			type: String,
+		},
 	},
-	email: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	avatar: {
-		type: String,
-	},
-	date: {
-		type: Date,
-		default: Date.now,
-	},
-});
+	{ timestamps: true },
+);
 
 userSchema.pre("save", async function(next, { password }) {
 	if (this.isNew) {
