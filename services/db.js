@@ -1,15 +1,15 @@
 const logger = require("./logger");
 const mongoose = require("mongoose");
-const { mongoURI } = require("../config/keys");
+const config = require("config");
 
 module.exports = () => {
 	mongoose
-		.connect(mongoURI, {
+		.connect(config.get("mongoURI"), {
 			useNewUrlParser: true,
 			useCreateIndex: true,
 		})
 		.then(() => {
-			if (process.env.NODE_ENV !== "production") return logger.info("Connected database: " + `${mongoURI}...`.green);
+			if (process.env.NODE_ENV !== "production") return logger.info("Connected database: " + `${config.get("mongoURI")}...`.green);
 			return logger.info("connected to production environment of mongodb...".blue);
 		})
 		.catch(ex => logger.error(`${ex.message}`));
