@@ -6,6 +6,7 @@
 	"scripts": {
 		"start": "node app.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "set NODE_ENV=development&& node app.js",
 		"server": "nodemon app.js"
 	},
 	"author": "Dibyajyoti Ghosal",
