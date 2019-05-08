@@ -1,5 +1,5 @@
 const { User } = require("../models/user");
-const { secretOrKey } = require("../config/keys");
+const config = require("config");
 const jwt = require("jsonwebtoken");
 
 const { Profile } = require("../models/profile");
@@ -19,7 +19,7 @@ module.exports = {
 			});
 
 		try {
-			const decoded = jwt.verify(token, secretOrKey);
+			const decoded = jwt.verify(token, config.get("secretOrKey"));
 			req.user = decoded;
 			return next();
 		} catch (error) {

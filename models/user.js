@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const jwt = require("jsonwebtoken");
 
-const { secretOrKey } = require("../config/keys");
+const config = require("config");
 
 const userSchema = new Schema(
 	{
@@ -42,7 +42,7 @@ userSchema.methods.generateAuthToken = function() {
 			name: this.name,
 			email: this.email,
 		},
-		secretOrKey,
+		config.get("secretOrKey"),
 	);
 };
 
