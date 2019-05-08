@@ -30,7 +30,7 @@ const educationSchema = new Schema(
 			type: String,
 		},
 	},
-	{ _id: false },
+	// { _id: false },
 );
 const experienceSchema = new Schema(
 	{
@@ -60,7 +60,7 @@ const experienceSchema = new Schema(
 			type: String,
 		},
 	},
-	{ _id: false },
+	// { _id: false },
 );
 module.exports = {
 	educationSchema,

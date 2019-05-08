@@ -1,4 +1,16 @@
+const _ = require("lodash");
+
 const { Profile } = require("../models/profile");
+const { User } = require("../models/user");
+
+function careerParser(type, id) {
+	if (type.map(t => String(t._id)).indexOf(id) === -1) {
+		return "The resource you're looking for is not there anymore!";
+	}
+	type.splice(type.map(t => String(t._id)).indexOf(id), 1);
+	return type;
+}
+
 module.exports = {
 	getMe(req, res) {
 		const { me } = res.locals;
@@ -45,21 +57,84 @@ module.exports = {
 		switch (true) {
 			case req.method === "POST" && newProfile === true:
 				profile.skills = [...new Set([...skills.split(",")])];
-				profile.education = [...education];
-				profile.experience = [...experience];
+				// profile.education = [...education];
+				// profile.experience = [...experience];
 				break;
 			case req.method === "PUT" && !newProfile:
 				profile.skills = body.skills ? [...new Set([...body.skills.split(",")])] : profile.skills;
-				profile.education = body.education ? [...profile.education, ...body.education] : profile.education;
-				profile.experience = body.experience ? [...profile.experience, ...body.experience] : profile.experience;
+				// profile.education = body.education ? [...profile.education, ...body.education] : profile.education;
+				// profile.experience = body.experience ? [...profile.experience, ...body.experience] : profile.experience;
 				break;
 			default:
 				return res.status(400).json({ error: true, message: "Coming from default" });
 		}
-		await profile.save(req.user);
+		const savedProfile = await profile.save(req.user);
 
-		return res.json({
-			profile: "xyz",
-		});
+		return res.json(savedProfile);
+	},
+	async addCareerToProfile(req, res) {
+		const { me: userProfile } = res.locals;
+		const { experience = [], education = [] } = userProfile;
+
+		const urlArr = req.url.split("/");
+
+		switch (true) {
+			case urlArr.includes("experience"):
+				experience.unshift(req.body);
+				break;
+			case urlArr.includes("education"):
+				education.unshift(req.body);
+				break;
+			default:
+				break;
+		}
+
+		await userProfile.save();
+		return res.json(userProfile);
+	},
+	async deleteCareerFromProfile(req, res) {
+		const { exp_id = "", edu_id = "" } = req.params;
+
+		const urlArr = req.url.split("/");
+
+		let { me: userProfile } = res.locals;
+
+		let { experience = [], education = [] } = userProfile;
+
+		switch (true) {
+			case urlArr.includes("experience"):
+				experience = careerParser(experience, exp_id);
+				break;
+			case urlArr.includes("education"):
+				education = careerParser(education, edu_id);
+				break;
+		}
+		await userProfile.save();
+		return res.json(typeof (experience || education) === "string" ? { error: true, message: experience || education } : userProfile);
+	},
+	async getUsers(req, res) {
+		let usersProfiles = res.locals.profiles;
+		return res.json(usersProfiles);
+	},
+	async getUsersExceptMe(req, res) {
+		let usersProfiles = res.locals.profiles;
+		console.log(usersProfiles);
+		const { email } = req.user;
+		console.log(email);
+		const getUsersExceptMe = _.chain(usersProfiles)
+			.intersectionBy(user => user.email !== email)
+			.value();
+		return res.json(getUsersExceptMe);
+	},
+	async getUserById(req, res) {
+		const { user } = res.locals;
+		console.log(user);
+		return res.json(user);
+	},
+	async removeProfileDetails(req, res) {
+		const me = res.locals.me;
+		await me.deleteOne();
+		await User.findOneAndDelete({ _id: req.user._id });
+		return res.json({ success: true, message: "Deleted user!" });
 	},
 };

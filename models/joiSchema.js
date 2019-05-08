@@ -1,13 +1,17 @@
 const Joi = require("joi");
 
+const validUsernameSchema = () => Joi.string().max(50);
+
 const getValidCareerSchema = (type, req) => {
+	let validSchema;
+
 	const commonProperties = {
 		from: req.method === "POST" ? Joi.date().required() : Joi.date(),
 		to: Joi.date(),
 		current: Joi.bool(),
 		description: Joi.string().max(150),
 	};
-	let validSchema;
+
 	switch (type) {
 		case "education":
 			validSchema = {
@@ -26,16 +30,16 @@ const getValidCareerSchema = (type, req) => {
 				location: Joi.string(),
 			};
 			break;
+
 		default:
 			validSchema = { error: true, message: "Wrong career type provided!" };
 	}
 	return validSchema;
 };
-const validUsernameSchema = () => Joi.string().max(50);
 
 const validCareerSchema = (type, req, maxAllowed) =>
-	Joi.array()
-		.items(getValidCareerSchema(type, req))
+	Joi.object()
+		.keys(getValidCareerSchema(type, req))
 		.max(maxAllowed);
 
 module.exports = {
@@ -69,8 +73,7 @@ module.exports = {
 			skills: req.method === "POST" ? Joi.string().required() : Joi.string(),
 			bio: Joi.string().max(150),
 			githubUsername: validUsernameSchema(),
-			experience: validCareerSchema("experience", req, 10),
-			education: validCareerSchema("education", req, 10),
+
 			social: Joi.object().keys({
 				youtube: validUsernameSchema(),
 				twitter: validUsernameSchema(),
@@ -80,5 +83,19 @@ module.exports = {
 			}),
 		};
 		return Joi.validate(profile, schema);
+	},
+	validateCareerSchema(career, req) {
+		let validSchema;
+		let { url } = req;
+		url = url.split("/");
+		switch (true) {
+			case url.includes("experience"):
+				validSchema = validCareerSchema("experience", req, 10);
+				break;
+			case url.includes("education"):
+				validSchema = validCareerSchema("education", req, 10);
+				break;
+		}
+		return Joi.validate(career, validSchema);
 	},
 };

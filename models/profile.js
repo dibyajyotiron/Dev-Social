@@ -62,12 +62,12 @@ const profileSchema = new Schema(
 );
 
 profileSchema.pre("find", function(next) {
-	this.populate("user", ["name", "avatar"]);
+	this.populate("user", ["name", "avatar", "email"]);
 	next();
 });
 
 profileSchema.pre("findOne", function(next) {
-	this.populate("user", ["name", "avatar"]);
+	this.populate("user", ["name", "avatar", "email"]);
 	next();
 });
 

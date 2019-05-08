@@ -26,9 +26,4 @@ module.exports = {
 			return res.status(400).json({ error: true, message: "Invalid token provided." });
 		}
 	},
-	async getLoggedInUser(req, res, next) {
-		const user = await Profile.findOne({ user: req.user._id });
-		res.locals.me = user;
-		return next();
-	},
 };
