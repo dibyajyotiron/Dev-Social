@@ -21,4 +21,13 @@ const postSchema = new Schema(
 	{ timestamps: true },
 );
 
+postSchema.pre("save", function(next, req) {
+	if (this.isNew) {
+		this.user = req.user._id;
+		this.name = req.user.name;
+		this.avatar = req.user.avatar;
+	}
+	next();
+});
+
 module.exports.Post = mongoose.model("Post", postSchema);

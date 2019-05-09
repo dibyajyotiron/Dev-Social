@@ -13,6 +13,10 @@ module.exports = {
 	},
 	async findUserById(req, res, next) {
 		const { user_id: userId } = req.params;
+
+		const message = verifyID(userId);
+		if (typeof message === "string") return res.status(422).json({ error: true, message: message });
+
 		const user = await Profile.findOne({ user: userId });
 		res.locals.user = user;
 		if (!user) return res.status(404).json({ error: true, message: "User with given id doesn't exist!" });

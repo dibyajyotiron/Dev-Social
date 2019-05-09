@@ -3,7 +3,6 @@ const { Schema } = mongoose;
 
 const commentSchema = new Schema(
 	{
-		uid: String,
 		text: { type: String, trim: true, required: true },
 		_parentCommentId: {
 			type: String,

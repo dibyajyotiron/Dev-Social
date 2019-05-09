@@ -37,8 +37,8 @@ const logger = winston.createLogger({
 	],
 	exitOnError: false, // do not exit on handled exceptions
 });
-
-logger.exceptions.handle(new winston.transports.File({ filename: `${appDir}/logs/exceptions/uncaughtExceptions.log` }));
+if (process.env.NODE_ENV === "production")
+	logger.exceptions.handle(new winston.transports.File({ filename: `${appDir}/logs/exceptions/uncaughtExceptions.log` }));
 
 process.on("unhandledRejection", reason => {
 	throw reason;

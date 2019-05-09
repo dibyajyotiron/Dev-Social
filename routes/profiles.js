@@ -40,7 +40,7 @@ router.get("/", getAllUsers, getUsers);
 router.get("/find_others", auth, getAllUsers, getUsersExceptMe);
 
 // @route GET /profiles/user/:userId
-// @desc Get USER PROFILES route
+// @desc Get USER PROFILE route
 // @access Private
 router.get("/users/:user_id", auth, findUserById, getUserById);
 

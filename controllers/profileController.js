@@ -121,9 +121,7 @@ module.exports = {
 	},
 	async getUsersExceptMe(req, res) {
 		let usersProfiles = res.locals.profiles;
-		console.log(usersProfiles);
 		const { email } = req.user;
-		console.log(email);
 		const getUsersExceptMe = _.chain(usersProfiles)
 			.intersectionBy(user => user.email !== email)
 			.value();
@@ -131,7 +129,6 @@ module.exports = {
 	},
 	async getUserById(req, res) {
 		const { user } = res.locals;
-		console.log(user);
 		return res.json(user);
 	},
 	async getGithubProfile(req, res) {
@@ -145,7 +142,6 @@ module.exports = {
 			headers: { "User-Agent": "node.js" },
 		};
 		getJSON(options, res, (sCode, data) => {
-			console.log(data);
 			if (sCode !== 200) return res.json({ error: true, message: `Github profile for ${req.params.username} was ${data.message}!` });
 			return res.json(data);
 		});
