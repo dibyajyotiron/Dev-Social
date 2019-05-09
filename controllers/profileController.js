@@ -1,7 +1,10 @@
 const _ = require("lodash");
+const config = require("config");
 
 const { Profile } = require("../models/profile");
 const { User } = require("../models/user");
+
+const { getJSON } = require("../utils/lib");
 
 function careerParser(type, id) {
 	if (type.map(t => String(t._id)).indexOf(id) === -1) {
@@ -130,6 +133,22 @@ module.exports = {
 		const { user } = res.locals;
 		console.log(user);
 		return res.json(user);
+	},
+	async getGithubProfile(req, res) {
+		const options = {
+			hostname: "api.github.com",
+			path: `/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${config.get("github.clientId")}&client_secret=${config.get(
+				"github.clientSecret",
+			)}`,
+			method: "GET",
+			port: 443,
+			headers: { "User-Agent": "node.js" },
+		};
+		getJSON(options, res, (sCode, data) => {
+			console.log(data);
+			if (sCode !== 200) return res.json({ error: true, message: `Github profile for ${req.params.username} was ${data.message}!` });
+			return res.json(data);
+		});
 	},
 	async removeProfileDetails(req, res) {
 		const me = res.locals.me;

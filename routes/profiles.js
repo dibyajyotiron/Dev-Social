@@ -16,6 +16,7 @@ const {
 	removeProfileDetails,
 	addCareerToProfile,
 	deleteCareerFromProfile,
+	getGithubProfile,
 } = require("../controllers/profileController");
 
 // @route GET /profiles/me
@@ -42,6 +43,11 @@ router.get("/find_others", auth, getAllUsers, getUsersExceptMe);
 // @desc Get USER PROFILES route
 // @access Private
 router.get("/users/:user_id", auth, findUserById, getUserById);
+
+// @route GET /profiles/github/:username
+// @desc Get GITHUB USER PROFILE route
+// @access Private
+router.get("/github/:username", getGithubProfile);
 
 // @route PUT /profiles/
 // @desc Update USER PROFILE route
