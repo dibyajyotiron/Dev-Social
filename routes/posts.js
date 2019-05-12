@@ -5,6 +5,7 @@ const { findPosts, findPostById } = require("../middlewares/post");
 const { auth } = require("../middlewares/userMiddleware");
 
 const { createOrUpdatePost, getPostById, getAllPosts, deletePost } = require("../controllers/postController");
+const { reactToPost } = require("../controllers/reactController");
 
 // @route POST /posts/
 // @desc Create POST route
@@ -35,5 +36,11 @@ router.get("/:post_id", auth, findPostById, getPostById);
 // @access Private
 
 router.delete("/:post_id", auth, findPostById, deletePost);
+
+// @route POST /posts/react/:post_id
+// @desc React to a Post route
+// @access Private
+
+router.post("/react/:post_id", auth, findPostById, reactToPost);
 
 module.exports = router;
