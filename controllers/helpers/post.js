@@ -6,9 +6,7 @@ module.exports = {
 		let result;
 
 		if (post_id) {
-			const post = await Post.findById(post_id)
-				.sort({ createdAt: -1 })
-				.lean();
+			const post = await Post.findById(post_id).lean();
 			const reactions = await PostReaction.find({ _post: post_id }).lean();
 
 			result = { ...post, reactions };
