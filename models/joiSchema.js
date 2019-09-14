@@ -98,4 +98,15 @@ module.exports = {
 		}
 		return Joi.validate(career, validSchema);
 	},
+	validateComment(comment) {
+		const schema = {
+			text: Joi.string()
+				.min(2)
+				.max(150),
+			name: Joi.string()
+				.min(2)
+				.max(25),
+		};
+		return Joi.validate(comment, schema);
+	},
 };
