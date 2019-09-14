@@ -1,5 +1,6 @@
 const { PostReaction } = require("../../models/postReact");
 const { Post } = require("../../models/post");
+const { Comment } = require("../../models/comment");
 
 module.exports = {
 	async getPostWithReactions(post_id = null) {
@@ -24,5 +25,19 @@ module.exports = {
 		}
 
 		return result;
+	},
+	async getComment(comment_id = null) {
+		let comment = await Comment.findById(comment_id);
+		if (!comment) return null;
+		return comment;
+	},
+	async getPost(post_id) {
+		let post = await Post.findById(post_id);
+		if (!post) return null;
+		return post;
+	},
+	async getPosts() {
+		let posts = await Post.find({});
+		return posts;
 	},
 };
