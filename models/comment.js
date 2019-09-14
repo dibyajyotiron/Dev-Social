@@ -14,8 +14,9 @@ const commentSchema = new Schema(
 		name: {
 			type: String,
 		},
-		avatar: {
-			type: String,
+		_post: {
+			type: Schema.Types.ObjectId,
+			ref: "Post",
 		},
 	},
 	{ timestamps: true },
@@ -23,15 +24,21 @@ const commentSchema = new Schema(
 
 commentSchema.pre("find", function(next) {
 	this.populate({
-		path: "user",
+		path: "_post",
 	});
 	next();
 });
 commentSchema.pre("findOne", function(next) {
 	this.populate({
-		path: "user",
+		path: "_post",
 	});
 	next();
 });
-
+commentSchema.pre("save", function(next, req) {
+	if (this.isNew) {
+		this.user = req.user._id;
+		this._post = req.params.post_id;
+	}
+	next();
+});
 module.exports.Comment = mongoose.model("Comment", commentSchema);
