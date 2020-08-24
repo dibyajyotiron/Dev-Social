@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { validateReqBody } = require("../middlewares/generic");
 const { validateUser, auth } = require("../middlewares/userMiddleware");
-const { validateUserSchema } = require("../models/joiSchema");
+const {
+  validateUserSchema,
+  validateUserFollowSchema,
+} = require("../models/joiSchema");
 const {
   loginOrRegisterUser,
   followUser,
