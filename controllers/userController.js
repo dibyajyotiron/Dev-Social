@@ -14,7 +14,7 @@ module.exports = {
 				const validPassword = await bcrypt.compare(password, user.password);
 				if (!validPassword) return res.status(400).send("Invalid password!");
 				const token = user.generateAuthToken();
-				return res.header("x-auth-token", token).json({ success: true, message: "Logged in successfully logged in!" });
+				return res.header("x-auth-token", token).json({ success: true, message: "User successfully logged in!" });
 			case !user && url.split("/").includes("login"):
 				return res.status(404).json({ error: true, message: "User is not registered!" });
 			case user && url.split("/").includes("register"):
