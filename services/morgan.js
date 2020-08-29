@@ -7,7 +7,7 @@ function compile(format) {
 	var fmt = String(JSON.stringify(format));
 	var js =
 		'  "use strict"\n  return ' +
-		fmt.replace(/:([-\w]{2,})(?:\[([^\]]+)\])?/g, function(_, name, arg) {
+		fmt.replace(/:([-\w]{2,})(?:\[([^\]]+)\])?/g, function (_, name, arg) {
 			var tokenArguments = "req, res";
 			var tokenFunction = "tokens[" + String(JSON.stringify(name)) + "]";
 
@@ -41,14 +41,12 @@ morgan.format("customFormat", function developmentFormatLine(tokens, req, res) {
 
 	if (!fn) {
 		// compile
-		fn = developmentFormatLine[color] = compile(
-			"\x1b[0m:method :url \x1b[" + color + "m:status\x1b[0m" + " :response-time ms".yellow + " - :user-agent\x1b[0m ".cyan + "Date: ".magenta + ":date[web]",
-		);
+		fn = developmentFormatLine[color] = compile("\x1b[0m:method :url \x1b[" + color + "m:status\x1b[0m" + " - :user-agent\x1b[0m".cyan + " :response-time ms".yellow + " Date: ".magenta + ":date[web]");
 	}
 
 	return fn(tokens, req, res);
 });
-module.exports = app => {
+module.exports = (app) => {
 	//   app.use(morgan(":method".green + " :url ".yellow + ":status" + " Agent:" + " ':user-agent'".blue + " Date: ':date[web]'"));
 	app.use(morgan("customFormat"));
 };
