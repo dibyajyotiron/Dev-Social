@@ -1,17 +1,19 @@
 {
-  "parserOptions": {
-    "ecmaVersion": 2020
-  },
-  "extends": ["airbnb", "prettier"],
-  "env": {
-    "es6": true
-  },
-  "rules": {
-    "no-console": "error",
-    "no-await-in-loop": 0,
-    "comma-dangle": 0,
-    "no-param-reassign": 0,
-    "camelcase": 0,
-    "linebreak-style": "off"
-  }
+	"parserOptions": {
+		"ecmaVersion": 2020
+	},
+	"plugins": ["prettier"],
+	"extends": ["airbnb", "prettier"],
+	"env": {
+		"es6": true
+	},
+	"rules": {
+		"prettier/prettier": "error",
+		"no-console": "error",
+		"no-await-in-loop": 0,
+		"comma-dangle": 0,
+		"no-param-reassign": 0,
+		"camelcase": 0,
+		"linebreak-style": "off"
+	}
 }
