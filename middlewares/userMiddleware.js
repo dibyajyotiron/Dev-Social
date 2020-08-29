@@ -1,4 +1,5 @@
 const { User } = require("../models/user");
+const { BAD_REQUEST } = require("../lib/errorLib");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 
@@ -25,5 +26,26 @@ module.exports = {
 		} catch (error) {
 			return res.status(400).json({ error: true, message: "Invalid token provided." });
 		}
+	},
+	async validFollowRequest(req, res, next) {
+		const { _follows } = req.body;
+		const { user } = req;
+		if (_follows === user._id) {
+			return next(
+				BAD_REQUEST({
+					message: "You can't follow yourself!",
+				})
+			);
+		}
+		const userExists = await User.findOne({
+			_id: _follows,
+		});
+		if (!userExists)
+			return next(
+				BAD_REQUEST({
+					message: "User with provided id doesn't exist!",
+				})
+			);
+		return next();
 	},
 };
