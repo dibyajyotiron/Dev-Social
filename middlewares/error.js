@@ -11,4 +11,13 @@ module.exports = {
 		console.error(error.message, error);
 		return res.status(500).json({ error: true, message: "Something went wrong!" });
 	},
+
+	genericError(error, req, res, next) {
+		console.error(error.message, error);
+
+		return res.status(error.statusCode).json({
+			error: true,
+			message: `${error.message}`,
+		});
+	},
 };
